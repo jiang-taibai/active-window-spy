@@ -21,11 +21,10 @@ ofstream openLogFile(const string &filename) {
 }
 
 void disableQuickEdit() {
-    HANDLE hConsole = GetStdHandle(STD_INPUT_HANDLE);
-    DWORD consoleMode;
-    GetConsoleMode(hConsole, &consoleMode);
-    consoleMode &= ~ENABLE_QUICK_EDIT_MODE;
-    SetConsoleMode(hConsole, consoleMode);
+    HANDLE hInput = GetStdHandle(STD_INPUT_HANDLE);
+    DWORD prev_mode;
+    GetConsoleMode(hInput, &prev_mode);
+    SetConsoleMode(hInput, prev_mode & ~ENABLE_QUICK_EDIT_MODE);
 }
 
 void printWindowInfo(HWND hwnd, ofstream &logFile) {
@@ -53,6 +52,7 @@ void printWindowInfo(HWND hwnd, ofstream &logFile) {
 }
 
 [[noreturn]] int main() {
+    disableQuickEdit();
     ofstream logFile = openLogFile(LOG_FILE_NAME);
     HWND lastFocus = nullptr;
     HWND focus = nullptr;
